@@ -58,11 +58,18 @@ def iter_unpack(f):
         dictionary.append(bytes([byte]))
 
     # add a special symbol
-    # dictionary[dict_size] = EOF
+    # dictionary[dict_size] = CLEAR
+    # 2xCLEAR == EOF
     dictionary.append(None)
+
+    # make a copy of the dictionary
+    # in case we get CLEAR
+    clear_dictionary = list(dictionary)
+    clear_bits_per_symbol = bits_per_symbol
 
     # wrap the file in a bit reader
     br = Bits(f)
+    previous_is_clear = False
     while True:
 
         # read symbol
@@ -74,13 +81,27 @@ def iter_unpack(f):
         # we're emitting a symbol that we haven't completed yet.
         # Whenever this happens, the last letter must be the same as the first.
         if i == len(dictionary)-1:
-            dictionary[-1] = dictionary[-1][:-1] + bytes([dictionary[-1][0]])
+            if dictionary[-1] is None:
+                # CLEAR symbol, nothing to do
+                pass
+            else:
+                dictionary[-1] = dictionary[-1][:-1] + bytes([dictionary[-1][0]])
 
         symbol = dictionary[i]
         log.debug('dict[%d] == %s' % (i, symbol))
 
         if symbol is None:
-            break  # EOF symbol
+            if previous_is_clear:
+                # this is EOF
+                break
+            else:
+                # just a CLEAR
+                dictionary = list(clear_dictionary)
+                bits_per_symbol = clear_bits_per_symbol
+                previous_is_clear = True
+                continue
+        else:
+            previous_is_clear = False
 
         # complete the previous symbol
         if dictionary[-1] is not None:
