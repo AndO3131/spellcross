@@ -33,7 +33,7 @@ class Bits:
                     result |= self.byte & ((1 << self.avail) - 1)
                     nbits -= self.avail
 
-                bs = f.read(1)
+                bs = self.f.read(1)
                 if bs == b'':
                     return None
 
@@ -42,6 +42,30 @@ class Bits:
                 self.avail = 8
 
         return result
+
+class LZFile:
+    def __init__(self, f):
+        self.iter = iter_unpack(f)
+        self.buf = b''
+
+    def read(self, nbytes):
+        result = b''
+
+        while len(result) < nbytes:
+            if nbytes <= len(self.buf):
+                result += self.buf[:nbytes]
+                self.buf = self.buf[nbytes:]
+                return result
+            else:
+                result += self.buf
+                try:
+                    self.buf = next(self.iter)
+                except StopIteration:
+                    return None
+
+    def __iter__(self):
+        return self.iter
+
 
 # The algorithm follows
 # https://en.wikipedia.org/wiki/Lzw
