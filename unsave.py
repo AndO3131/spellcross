@@ -12,7 +12,12 @@ log = logging.getLogger('unsave')
 def main():
     fsname = sys.argv[1]
     with open(fsname, 'rb') as f:
-        for chunk in unlz.LZFile(f):
+        lz = unlz.LZFile(f)
+        while True:
+            chunk = lz.read(16)
+            if chunk is None:
+                break
+
             print(chunk)
 
 if __name__ == '__main__':
