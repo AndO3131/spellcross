@@ -51,7 +51,7 @@ class LZFile:
     def read(self, nbytes):
         result = b''
 
-        while len(result) < nbytes:
+        while True:
             if len(self.buf) >= nbytes:
                 result += self.buf[:nbytes]
                 self.buf = self.buf[nbytes:]
@@ -60,12 +60,9 @@ class LZFile:
                 result += self.buf
                 nbytes -= len(self.buf)
                 try:
-                    log.debug('need more bytes (%d)' % nbytes)
                     self.buf = next(self.iter)
                 except StopIteration:
                     return None
-
-        return result
 
     def __iter__(self):
         return self.iter

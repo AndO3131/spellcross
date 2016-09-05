@@ -4,6 +4,8 @@ import sys
 import struct
 import logging
 
+import utils
+
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger('unfs')
 
@@ -22,7 +24,7 @@ def main():
             # uint32_t = offset from the beginning of the FS file
             # uint32_t = length
             fname_raw, offset, length = struct.unpack('<13sLL', f.read(21))
-            fname = fname_raw.partition(b'\0')[0].decode('ascii')
+            fname = utils.from_c_string(fname_raw)
             index.append((fname, offset, length))
 
         for fname, offset, length in index:
