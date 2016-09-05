@@ -80,10 +80,16 @@ def iter_unpack(f):
 
     log.debug('dict_size = %d, bits per symbol = %d' % (dict_size, bits_per_symbol))
 
-    # dict_size * uint8_t = initial dictionary
-    dictionary = []
-    for byte in f.read(dict_size):
-        dictionary.append(bytes([byte]))
+    if dict_size < 256:
+        # the usual case
+        # dict_size * uint8_t = initial dictionary
+        dictionary = []
+        for byte in f.read(dict_size):
+            dictionary.append(bytes([byte]))
+    else:
+        # if the dictionary contains all bytes,
+        # we needn't store it -- so it's not present in the file
+        dictionary = [bytes([byte]) for byte in range(256)]
 
     # add a special symbol
     # dictionary[dict_size] = CLEAR
