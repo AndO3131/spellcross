@@ -23,7 +23,7 @@ def main(args):
                 image.putpalette(list(f.read()))
 
     with open(args.output, 'wb') as f:
-        image.save(f, format='PNG')
+        image.save(f, format=args.format)
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser('merge RAW images with palette into PNG')
@@ -31,4 +31,5 @@ if __name__ == '__main__':
     ap.add_argument('-p', '--palette', default=None, help='*.PAL file (grayscale if omitted)')
     ap.add_argument('-i', '--input', default='/dev/stdin', help='input [%(default)]')
     ap.add_argument('-o', '--output', default='/dev/stdout', help='output [%(default)]')
+    ap.add_argument('-f', '--format', default='PNG', help='output format [%(default)]')
     main(ap.parse_args())
