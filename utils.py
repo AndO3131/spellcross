@@ -1,3 +1,5 @@
+# table taken from:
+# https://stackoverflow.com/a/17747103
 CP_852 = [
          '\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006',
          '\u0007', '\u0008', '\u0009',     '\n', '\u000B', '\u000C',     '\r',
@@ -43,6 +45,7 @@ def from_cp852(bs):
 
 def from_c_string(bs, encoding='cp852'):
     bs = bs.partition(b'\0')[0]
+
     if encoding == 'cp852':
         return from_cp852(bs)
     else:
