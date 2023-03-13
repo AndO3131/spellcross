@@ -151,6 +151,7 @@ def unpack(f):
     return b''.join(iter_unpack(f))
 
 if __name__ == '__main__':
-    with open(sys.argv[1], 'rb') as f:
-        for chunk in iter_unpack(f):
-            sys.stdout.buffer.write(chunk)
+     with open(sys.argv[1], 'rb') as f:
+        with open(sys.argv[2], 'wb') as g:
+            for chunk in iter_unpack(f):
+                g.write(chunk)

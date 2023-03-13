@@ -14,7 +14,7 @@ def main():
     dirname = sys.argv[2]
 
     index = []
-    with open(sys.argv[1], 'rb') as f:
+    with open(fsname, 'rb') as f:
         # uint32_t = entry_count
         entry_count = struct.unpack('<i', f.read(4))[0]
         log.debug('entry_count = %d' % entry_count)
